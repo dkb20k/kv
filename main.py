@@ -18,6 +18,7 @@ os.makedirs(STATIC_DIR, exist_ok=True)
 
 
 async def handle_post(request: web.Request) -> web.Response:
+    print("Processing POST request")
     if request.body_exists:
         body = await request.read()
         mime = magic.from_buffer(body, mime=True)
@@ -26,10 +27,12 @@ async def handle_post(request: web.Request) -> web.Response:
         with open(f"{STATIC_DIR}/{filename}", 'wb') as out:
             out.write(body)
             return web.json_response({"url": f"{STATIC_HOST}/{filename}"})
+    print("Something went wrong")
     return web.HTTPInternalServerError(reason="Something went wrong")
 
 
 async def handle_get(request: web.Request) -> web.Response:
+    print("Processing GET request")
     filename = request.match_info["filename"]
     try:
         with open(f"{STATIC_DIR}/{filename}", 'rb') as f:
@@ -37,6 +40,7 @@ async def handle_get(request: web.Request) -> web.Response:
         os.remove(f"{STATIC_DIR}/{filename}")
         return web.Response(body=content, status=200, content_type=mimetypes.guess_type(filename)[0])
     except FileNotFoundError:
+        print("File not found: " + filename)
         return web.HTTPNotFound()
 
 
