@@ -20,5 +20,4 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.PAT }}
-          repository: dkb20k/kv
-          tags: latest
+
